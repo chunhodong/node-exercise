@@ -1,0 +1,1228 @@
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ko" xml:lang="ko">
+	<head>
+		<title>�̱��� �������� ���輭 Ŀ�´�Ƽ</title>
+		<meta name="publisher" content="IdeaBeans" />
+		<meta name="Author" content="JinJooho" />
+		<meta http-equiv="Content-Type" content="text/html; charset=euc-kr" />
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+		<script type="text/javascript" src="/js/common.js"></script>
+		<script type="text/javascript" src="/js/jquery-1.9.0.min.js"></script>
+		<script type="text/javascript" src="/js/jquery.bxslider.js"></script><!-- bxSlider Javascript file -->
+
+		<link href="/css/jquery.bxslider.css" rel="stylesheet" /><!-- bxSlider CSS file -->
+		<script type="text/javascript">
+			var license_list = [];
+			var mainSlider = null;
+
+			//license_list.push({"name": "��ǻ��Ȱ��ɷ�", "dday": "13", "url": "https://www.youngjin.com" });
+			//license_list.push({"name": "����ó�����", "dday": "21", "url": "https://www.youngjin.com" });
+			//license_list.push({"name": "�������μ���", "dday": "16", "url": "https://www.youngjin.com" });
+
+			$(function () { // ������ �·ε� ������
+				// �Ű�����
+				(function () {
+					var bookList = $(".bookList"),
+						view = 5;
+
+					// �� ó��
+					$(".newBook .tabBook a").on("mouseover", function () {
+						var tabBook = $(".newBook .tabBook a"),
+							num = tabBook.index(this);
+
+						tabBook.removeClass("on");
+						$(this).addClass("on");
+
+						bookList.hide().eq(num).show();
+
+						return false;
+					});
+
+					// �� ó��, ������ �̵�
+					$(".newBook .tabBook a").on("click", function () {
+						//var tabBook = $(".newBook .tabBook a"),
+						//	num = tabBook.index(this);
+						//	goSeries(num+1);
+
+						return false;
+					});
+					
+					// �����̴�
+					// ���� ��ư on off ó��
+					
+					bookList.each(function () {
+						var max = $(this).find("li").size();
+
+						$(this).data("max", max);
+
+						if(max > 5) {
+							var img = $(this).find("img:first"),
+								src = img.attr("src");
+
+							img.attr("src", src.replace("_off", "_on"));
+						}
+						
+					});
+
+					// ��ư �̺�Ʈ ����
+					bookList.find("> a").on("click", function () {
+						var idx = 0,
+							max = 5,
+							tabBookList = $(this).parent();
+						
+						if (tabBookList.data("idx")) idx = tabBookList.data("idx");
+						if (tabBookList.data("max")) max = tabBookList.data("max");
+
+						if (tabBookList.find("> a").index(this) == 0) {
+							idx--;
+						} else {
+							idx++;
+						}
+						
+						if (idx < 0) idx = 0;
+						if (max - idx < view) idx = max - view;
+
+						tabBookList.data("idx", idx);
+						tabBookList.find("ul").stop().animate({"left": -162 * idx}, 400);
+						
+						setBtn(tabBookList);
+
+						return false;
+					});
+
+					function setBtn(tabBookList) {
+						var idx = 0,
+							max = 5,
+							firstImg = tabBookList.find("img:first"),
+							firstSrc = firstImg.attr("src"),
+							lastImg = tabBookList.find("img:last"),
+							lastSrc = lastImg.attr("src");
+						
+						if (tabBookList.data("idx")) idx = tabBookList.data("idx");
+						if (tabBookList.data("max")) max = tabBookList.data("max");
+						
+						if(idx == 0) {
+							lastImg.attr("src", lastSrc.replace("_on", "_off"));
+						} else {
+							lastImg.attr("src", lastSrc.replace("_off", "_on"));							
+						}
+						
+						if (idx >= max - view) {
+							firstImg.attr("src", firstSrc.replace("_on", "_off"));
+						} else {
+							firstImg.attr("src", firstSrc.replace("_off", "_on"));							
+						}
+					}
+				}) ();
+				
+				// D-Day ���� ó��
+				if( license_list.length > 0 ) {
+					dday_counter(0);
+					$('.dday').show();
+					$('.youtube_main').hide();
+				}
+				else {
+					$('.dday').hide();
+					$('.youtube_main').show();
+				}
+			});
+
+			$(document).ready(function () {
+				// �����̴� (bxslider ���)
+				var on = "img/ico_roll_on.png",
+					off = "img/ico_roll_off.png";
+				
+				mainSlider = $('.rollImgList').bxSlider({
+						"auto": true, 
+						"controls": false, 
+						"pause": 4000, 
+						"slideWidth": 800,
+						"slideMargin": 0,
+						"video": false,
+						"onSlideBefore": function ($slideElement, oldIndex, newIndex) {
+							$(".rolling .rollList img").attr("src", off).eq(newIndex).attr("src", on);
+						}
+				});
+				
+				$(".rolling .rollList a").on("click", function () {
+					mainSlider.goToSlide($(".rolling .rollList a").index(this));
+					return false;
+				});
+
+				$(".rolling ul li a").hover(mainSlider.stopAuto, mainSlider.startAuto);
+
+			});
+
+			$(document).ready(function() {
+				$('#login').click(function() {
+					$('#loginLayer').show();
+					return false;
+				});
+			});
+			$(document).ready(function() {
+				$('#close').click(function() {
+					$('#loginLayer').hide();
+					return false;
+				});
+			});
+			
+			function dday_counter(idx) {
+				$('.dday').data('idx', idx);
+				
+				$('#dday_title').text(license_list[idx]['name']);
+				
+				var dday = "000" + license_list[idx]['dday'];
+				dday = dday.substring(dday.length - 3);
+				
+				dday_arr = dday.split('');
+				var counter_html = "";
+				
+			
+				for( var i = 0;  i < dday_arr.length;  i++ ) {
+					var no = dday_arr[i];
+					counter_html += "<span class=\"no0" + (i+1) + "\"><img src=\"img/no" + no + ".gif\" alt=\"" + no + "\" /></span>";
+				}
+				
+
+				$('#dday_counter').html(counter_html);
+				$('#dday_url').html("<a href='"+ license_list[idx]['url'] +"' target='_blank'><img src='/img/btn_accept.gif' alt='�����ϱ�' /></a>");
+
+			}
+			
+			function dday_counter_prev() {
+				var curIdx = $('.dday').data('idx');
+				var idx = 0;
+				if( curIdx < 1 ) {
+					idx = license_list.length - 1;
+				}
+				else {
+					idx = curIdx - 1;
+				}
+				dday_counter(idx);
+			}
+			
+			function dday_counter_next() {
+				var curIdx = $('.dday').data('idx');
+				var idx = curIdx + 1;
+				if( idx >= license_list.length ) {
+					idx = 0;
+				}
+				dday_counter(idx);
+			}
+			
+			function mediaPlayEnd() {
+				mainSlider.startAuto();
+			}
+// ���� ��ũ��Ʈ
+	function closeWin(divpop,checkpop) {
+		if (( document.getElementById(checkpop).checked ) == true){
+			SetCookie( checkpop, "done");//1�� �Ϸ絿�� ��â�� ���� �ʰ� �մϴ�.
+			document.getElementById(divpop).style.display = "none";
+		}
+		else{
+			document.getElementById(divpop).style.display = "none";
+		}
+
+	}
+
+	function SetCookie(cookieName,cookieVal){
+		date=new Date();
+		validity=10;
+		date.setDate(date.getDate()+validity);
+		document.cookie=cookieName+'='+escape(cookieVal)+'; path=/; expires='+date.toGMTString();
+	}
+
+	function GetCookie(cookieName,divpop){
+		str="";
+		allCookies=document.cookie.split('; ');  // cookies are separated by semicolons
+		for (i=0;i<allCookies.length;i++){
+			cookieArray=allCookies[i].split('='); // a name/value pair (a crumb) is separated by an equal sign
+			if (cookieName==cookieArray[0])
+				str=unescape(allCookies[i]);
+		}
+		if(str==""){
+			document.getElementById(divpop).style.display="block";
+		}
+	}
+
+	function open_window(w_title,w_width,w_height,scroll_yes,link_file){
+		var openPop = null;
+		var winl = (screen.width - w_width) / 2;
+		var wint = (screen.height - w_height) / 2 - 20;
+		wp = 'location=no, status=yes, toolbar=no,width='+w_width+',height='+w_height+',top='+wint+',left='+winl+',scrollbars='+scroll_yes+',resizable=no';
+
+		window.open(link_file, w_title, wp);
+	}
+
+
+function goSeries( no )
+{
+	
+	location.href = "/tpl/series.asp?catNo="+no ;
+
+}
+
+
+
+		</script>
+		<link rel="stylesheet" type="text/css" href="/css/__layout.css" />
+	</head>
+
+	<body>
+<script language="javascript" src="/js/popup.js"></script>
+
+
+		<div id="wrap">
+			<!-- ��� ���� -->
+
+
+		
+        <script type="text/javascript"  src="/include/js/tabs.js"></script>
+        <script type="text/javascript"  src="/include/js/textboxeffc.js"></script>
+    	<SCRIPT type="text/javascript"  src="/include/js/zxml.js"></SCRIPT>			<!-- AJAX ���̺귯��-->
+    	<SCRIPT type="text/javascript"  src="/include/js/common.js"></SCRIPT>
+    	<SCRIPT type="text/javascript"  src="/include/js/fnCommon.js"></SCRIPT>
+    	
+		<SCRIPT type="text/javascript"  src="/artyboard/skin/member/login/yj_login_sp_1/login.js"></SCRIPT>
+	<script>
+	//CBT��â����ֱ�
+	function open_window(w_title,w_width,w_height,scroll_yes,link_file){
+		var openPop = null;
+		var winl = (screen.width - w_width) / 2;    
+		var wint = (screen.height - w_height) / 2 - 20;
+		wp = 'location=no, status=yes, toolbar=no,width='+w_width+',height='+w_height+',top='+wint+',left='+winl+',scrollbars='+scroll_yes+',resizable=no';
+
+		window.open(link_file, w_title, wp);
+	}
+	</script>
+<!--png8�� ġȯ	 <script type="text/javascript" src="/include/js/unitpngfix/unitpngfix/unitpngfix.js"></script>	-->
+	<!--[if lt IE 7]>
+	<![endif]-->
+<script>
+function doLogin(f)
+{
+	if(f.SET_LOGIN_TYPE.checked)
+	{
+		f.action = "/member/login_proc.asp";
+	}else{
+		f.action = "/member/login_proc.asp";
+	}
+	return true;
+}
+</script>
+			<div id="header">
+				<div class="headerTop">
+					<h1>
+					<img src="https://www.youngjin.com/tpl/images/common/logo_www.jpg" alt="��������" usemap="#imgmap2015111615120" style="margin-top: 25px; margin-left: -5px;"><map id="imgmap2015111615120" name="imgmap2015111615120"><area shape="rect" alt="��������" title="��������" coords="1,1,95,49" href="https://www.youngjin.com/" target="_self" /><area shape="rect" alt="�̱���in ���輭" title="�̱���in ���輭" coords="105,1,195,49" href="/" target="_self" /><area shape="rect" alt="�������� ���θ�" title="�������� ���θ�" coords="203,1,300,49" href="https://shop.youngjin.com/" target="_self" /></map>
+					</h1>
+					<ul class="lnb">
+						<li><a href="/"><img src="/img/lnb01.gif" alt="Ȩ" /></a></li>
+						
+						<li><a href="#" id="login"><img src="/img/lnb02.gif" alt="�α���" /></a></li>
+						<li><a href="https://www.youngjin.com/member/join_step1.asp"><img src="/img/lnb03.gif" alt="ȸ������" /></a></li>
+						<li><a href="https://www.youngjin.com/member/idpw_search_old.asp"><img src="/img/lnb04.gif" alt="��й�ȣ ã��" /></a></li>
+
+						<li><a href="/artyboard/mboard.asp?strBoardID=pds_bookinfo&intPage=1"><img src="https://www.youngjin.com/images/common/btn_pds_bookinfo.png" alt="���輭 ������ ��û �ٷΰ���" style="position: relative; top: -20px; height: 36px;"></a></li>
+						<li><a href="https://shop.youngjin.com/joincheck/joincheck_active"><img src="https://www.youngjin.com/images/common/btn_joinckeck.png" alt="�⼮üũ �̺�Ʈ" style="position: relative; top: -20px; height: 36px;"></a></li>
+						<li class="last"><a href="https://shop.youngjin.com/board/write?id=bulkorder"><img src="https://www.youngjin.com/images/common/btn_bullkorder.png" alt="�뷮���� ����" style="position: relative; top: -20px; height: 36px;"></a></li>
+
+
+					
+
+					</ul>
+
+					<div id="loginLayer" class="login">
+						<form name="loginForm" method="post" action="/member/login_proc.asp" onsubmit="return doLogin(this);">  <!-- 2013/3 ~ 2015/4/25 action="https://license.youngjin.com:5001/member/login_proc.asp" -->
+							<div class="loginContent">
+								<ul class="enter">
+									<input type="hidden" name="strPrevUrl" value="https://license.youngjin.com">
+									<li><input name="mid" id="strLoginID" value="" type="text" class="bgId" onfocus="this.className='text'"  /></li>
+									<li><input  name="mpw" id="strLoginPwd" type="password" class="bgPass"  onfocus="this.className='text'" /></li>
+								</ul>
+
+								<input type="image" id="LOGIN_BTN" src="/img/btn_login.gif"   class="btnLogin">
+								
+								<p class="saveId">
+								<input  name="SET_LOGIN_SAVE"id="SET_LOGIN_SAVE"  type="checkbox" value="1" /> <label for="saveId" id="SET_LOGIN_SAVE_img">���̵� ����</label>
+								<input  name="SET_LOGIN_TYPE" id="SET_LOGIN_TYPE"  type="checkbox" value="1" /> <label for="saveId" id="SET_LOGIN_SAVE_img">��������</label>
+								</p>
+								<ul class="joinFind">
+									<li><a id="member-join" href="https://www.youngjin.com/member/join_step1.asp"><img src="/img/txt_join.gif"  alt="ȸ������" /></a></li>
+									<li class="find"><a id="find-member" href="https://www.youngjin.com/member/idpw_search_old.asp"><img src="/img/txt_find.gif"  alt="���̵�/��й�ȣ ã��" /></a></li>
+								</ul>
+								<a href="#" id="close" class="close"><img src="/img/btn_close.gif" alt="�ݱ�" /></a>
+							</div>
+							</form>
+					</div>
+				</div>
+			</div>
+			<!-- ��� �� -->
+			<!-- GNB ���� -->
+			
+<script>
+$(function(){
+  $("#gnb-menu li").hover(function(){
+    $('ul:first',this).show();
+  }, function(){
+    $('ul:first',this).hide();
+  });
+  //$("#gnb-menu>li:has(ul)>a").each( function() {	// V ǥ�� ���� ���
+  //  $(this).html( $(this).html()+' &or;' ); 		// V ǥ�� ���� ���
+  //});
+  //$("#gnb-menu ul li:has(ul)")						// > ǥ�� ���� ���
+  //  .find("a:first")								// > ǥ�� ���� ���
+  //  .append("<p style='float:right;margin:-3px'>&#9656;</p>");	// > ǥ�� ���� ���
+});
+</script>
+
+<div id='gnb-menu-bar'>
+	<div id="gnb-menu-container">
+		<ul id="gnb-menu">
+			<li><a href="#">���ᵿ����</a>
+				<ul>
+					<li class="lecture_d1"><a href="#">�������μ���</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2251&cate_cd=2251">�ʱ� ������</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2253&cate_cd=2251">�ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1116&cate_cd=2251">�Ǳ� �⺻��</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">��ǻ��Ȱ��ɷ� �ʱ�</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2369&cate_cd=2237">1�� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2388&cate_cd=2237">1�� �ֽ� ������(������)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2419&cate_cd=2237">1�� ���⹮����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2081&cate_cd=2237">1�� �̴�(����)����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2371&cate_cd=2237">2�� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2389&cate_cd=2237">2�� �ֽ� ������(������)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2420&cate_cd=2237">2�� ���⹮����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2280&cate_cd=2237">2�� �̴�(����)����</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">��ǻ��Ȱ��ɷ� �Ǳ�</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2424&cate_cd=2237">1�� �⺻��(2020��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2425&cate_cd=2237">1�� ���⹮����(2020��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2367&cate_cd=2237">1�� (2018��, 2019��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2342&cate_cd=2237">1�� Office 2010</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2336&cate_cd=2237">1�� Office 2007</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2422&cate_cd=2237">2�� �⺻��(2020��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2426&cate_cd=2237">2�� ���⹮����(2020��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2340&cate_cd=2237">2�� (2018��, 2019��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2332&cate_cd=2237">2�� Office 2007</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">����ó�����/������/��ɻ�</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1093&cate_cd=2255">��� �ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2083&cate_cd=2255">��� �ʱ� �̴�(����)����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1133&cate_cd=2255">��� �Ǳ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1149&cate_cd=2255">������ �ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1162&cate_cd=2255">������ �Ǳ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2079&cate_cd=2255">��ɻ� �ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2255&cate_cd=2255">��ɻ� �ʱ� ������</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2257&cate_cd=2255">��ɻ� �Ǳ� �⺻��</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">ITQ</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2146&cate_cd=2146">����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2142&cate_cd=2046">�ѱ�</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2144&cate_cd=2046">�Ŀ�����Ʈ</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2261&cate_cd=2046">�׼���</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2391&cate_cd=2146">ȯ�����޺�</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">GTQ</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2413&cate_cd=2043">���伥 1��(ISBN:5718)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2043&cate_cd=2043">���伥 1��(ISBN:5546)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2400&cate_cd=2043">���伥 2��(ISBN:5719)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2045&cate_cd=2043">���伥 2��(ISBN:5547)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2180&cate_cd=2043">���伥 3��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2282&cate_cd=2043">�Ϸ���Ʈ 1��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2377&cate_cd=2043">�Ϸ���Ʈ 2��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2415&cate_cd=2043">ȯ�����޺� 1��(ISBN:5812, 6022)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2284&cate_cd=2043">ȯ�����޺� 1��(ISBN:5554)</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">��ǻ�ͱ׷��Ƚ�</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2150&cate_cd=2150">�ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2296&cate_cd=2150">�ʱ� �̴�(����)����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2427&cate_cd=2150">�Ǳ� �⺻��(2020)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2399&cate_cd=2150">�Ǳ� �⺻��(2019)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2398&cate_cd=2150">�Ǳ� �⺻��(2018)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2152&cate_cd=2150">�Ǳ� �⺻��(2017)</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">��������</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2087&cate_cd=2087">�ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2298&cate_cd=2087">�ʱ� �̴�(����)����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2089&cate_cd=2087">�Ǳ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2379&cate_cd=2087">�Ǳ� �⺻��(�ֽ���)</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">�繫�ڵ�ȭ������</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1173&cate_cd=2259">�ʱ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2085&cate_cd=2259">�ʱ� �̴�(����)����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=1175&cate_cd=2259">�Ǳ� �⺻��</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">�������</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2384&cate_cd=2286">�Ǳ� �⺻��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2286&cate_cd=2286">�Ǳ�(2018, 2017)</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">�ѱ���</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2418&cate_cd=2154">����(������)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2154&cate_cd=2154">����</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2203&cate_cd=2154">�߱�</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2278&cate_cd=2154">�ʱ�</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2311&cate_cd=2154">���⹮����-����</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">����/��������/��������</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2103&cate_cd=2103">������ɻ�</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2208&cate_cd=2207">����������ɻ�</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">�ڵ��ڰ���</a>
+						<ul>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2363&cate_cd=2362">SW�ڵ� 3��(��Ʈ��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2373&cate_cd=2362">SW�ڵ� 3��(��ũ��ġ)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2386&cate_cd=2362">SW�ڵ� 2��(��Ʈ��)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2387&cate_cd=2362">SW�ڵ� 2��(��ũ��ġ)</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2402&cate_cd=2362">��ǻ�û���ɷ� 3��(��ũ��ġ)</a>
+						</ul>
+					</li>
+					<li class="lecture_d1"><a href="#">��Ÿ</a>
+						<ul>
+							<!--<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2205&cate_cd=2205">e-TEST</a>-->
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2326&cate_cd=2326">��������</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2304&cate_cd=2305">����/ȸ��</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2313&cate_cd=2205">�����ý��۰�����</a>
+							<!--<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2315&cate_cd=2205">���Ͼ�Ʈ</a>-->
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2375&cate_cd=2374">������������</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2334&cate_cd=2205">�ѱ��ǿ�۾���</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2346&cate_cd=2205">NCS �������ʴɷ���</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2356&cate_cd=2205">��Ʈ��ũ������</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2360&cate_cd=2358">IT Plus</a>
+							<li class="lecture_d2"><a href="/free_edu/free_edu_mp4.asp?elc_cd=2393&cate_cd=2393">SQL</a>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li><a href="#">�����亯</a>
+				<ul>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_a&intPage=1">�������μ���</a>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_b&intPage=1">��ǻ��Ȱ��ɷ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_c&intPage=1">����ó�����/������/��ɻ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_d&intPage=1">ITQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_e&intPage=1">GTQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_f&intPage=1">��ǻ�ͱ׷��Ƚ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_g&intPage=1">��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_h&intPage=1">�繫�ڵ�ȭ������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_i&intPage=1">�������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_j&intPage=1">�ѱ���</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_k&intPage=1">����/��������/��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QnA_l&intPage=1">��Ÿ</a></li>
+				</ul>
+			</li>
+			<li><a href="#">���⹮��</a>
+				<ul>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_a&intPage=1">�������μ��� �ʱ�</a>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_b&intPage=1">��ǻ��Ȱ��ɷ� �ʱ�</a></li>
+					<!--<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_c&intPage=1">����ó�����/������/��ɻ�</a></li>-->
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_d&intPage=1">ITQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_e&intPage=1">GTQ</a></li>
+					<!--<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_f&intPage=1">��ǻ�ͱ׷��Ƚ�</a></li>-->
+					<!--<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_g&intPage=1">��������</a></li>-->
+					<!--<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_h&intPage=1">�繫�ڵ�ȭ������</a></li>-->
+					<!--<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_i&intPage=1">�������</a></li>-->
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_j&intPage=1">�ѱ���ɷ°���</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_m&intPage=1">����ȸ��/����</a></li>
+					<!--<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_k&intPage=1">����/��������/��������</a></li>-->
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=QuestionBank_l&intPage=1">��Ÿ</a></li>
+				</ul>
+			</li> 
+			<li><a href="#">�ڷ��</a>
+				<ul>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_a&intPage=1">�������μ���</a>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_b&intPage=1">��ǻ��Ȱ��ɷ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_c&intPage=1">����ó�����/������/��ɻ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_d&intPage=1">ITQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_e&intPage=1">GTQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_f&intPage=1">��ǻ�ͱ׷��Ƚ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_g&intPage=1">��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_h&intPage=1">�繫�ڵ�ȭ������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_i&intPage=1">�������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_j&intPage=1">�ѱ���</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_k&intPage=1">����/��������/��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Pds_l&intPage=1">��Ÿ</a></li>
+				</ul>
+			</li> 
+			<li><a href="#">����ǥ</a>
+				<ul>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_a&intPage=1">�������μ���</a>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_b&intPage=1">��ǻ��Ȱ��ɷ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_c&intPage=1">����ó�����/������/��ɻ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_d&intPage=1">ITQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_e&intPage=1">GTQ</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_f&intPage=1">��ǻ�ͱ׷��Ƚ�</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_g&intPage=1">��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_h&intPage=1">�繫�ڵ�ȭ������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_i&intPage=1">�������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_j&intPage=1">�ѱ���</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_k&intPage=1">����/��������/��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=Errata_l&intPage=1">��Ÿ</a></li>
+				</ul>
+			</li> 
+			<li><a href="#">Ŀ�´�Ƽ</a>
+				<ul>
+					<li class="lecture_d1"><a href="/artyboard/Mboard.asp?strBoardID=notice">��������</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=event">Event</a></li>
+					<li class="lecture_d1"><a href="/artyboard/mboard.asp?strBoardID=t_Pds_1">����/���� �ڷ��</a></li>
+				</ul>
+			</li> 
+			<li><a href="#">�����Ұ�</a>
+				<ul>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=137" target="_blank">�������μ���</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=138" target="_blank">��ǻ��Ȱ��ɷ�</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=139" target="_blank">����ó��/�繫�ڵ�ȭ/�������</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=218" target="_blank">ITQ</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=140" target="_blank">GTQ</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=141" target="_blank">��ǻ�ͱ׷��Ƚ�</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=220" target="_blank">��������</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=221" target="_blank">�ѱ���</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=222" target="_blank">����/��������/��������</a></li>
+					<li class="lecture_d1"><a href="https://www.youngjin.com/book/book_list.asp?cate_cd=3&child_cate_cd=142" target="_blank">��Ÿ</a></li>
+				</ul>
+			</li> 
+		</ul>
+	</div>
+</div>
+
+
+			<!-- GNB  -->
+
+
+
+
+
+
+
+
+
+
+			<!-- ������ ���� -->
+			<div id="contents">
+				<!-- ��� ���� ���� -->
+				<div class="banner">
+					<div class="bannerContent">
+						<ul class="program">
+							<li><a href="/artyboard/Mboard.asp?strBoardID=t_Pds_1"><img src="img/banner_left_1.jpg" alt="����/���� �ڷ��" /></a></li>
+							<li><a href="https://cbt.youngjin.com/" target="_blank"><img src="img/banner_left_2.jpg" alt="CBT����(�¶��� ���ǰ���)" /></a></li>
+							<li><a href="/artyboard/mboard.asp?strBoardID=event"><img src="img/banner_left_3.jpg" alt="365 �̺�Ʈ" /></a></li>
+							<li><a href="https://drive.google.com/file/d/1cyJscsd4ujRRO5l2QLClmD2ftF6BVeTp/view" target="_blank"><img src="img/banner_left_4.jpg" alt="��������" /></a></li>
+						</ul>
+						<div class="rolling">
+							<ul class="rollImgList">
+								<li class="rollingli"><a href="https://bit.ly/2tlbIuf"><img src="img/banner/banner_20190214.png" alt="[�ȳ�] �̱��� Ȩ������ ���� ���� ����" /></a></li>
+								<li class="rollingli"><a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=85203"><img src="img/banner/banner_20191011.png" alt="[�ȳ�] 2020 ����ó�� ���� ���� ����" /></a></li>
+								<li class="rollingli"><a href="https://bit.ly/30YUp0m"><img src="img/banner/banner_20191008.png" alt="2020 ��ǻ��Ȱ��ɷ� �Ű� �ȳ�" /></a></li>
+								<li class="rollingli"><a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=76930"><img src="img/banner/banner_20180719_1.jpg" alt="[�ȳ�] 2019�� �̱��� �ٸ���Ÿ 2�� �ڰݽ��� ������ �Ⱓ!" /></a></li>
+								<li class="rollingli"><img src="img/banner/banner_20190730_word.jpg" alt="�������μ��� �Ű� �ȳ�" /></li>
+								<li class="rollingli"><a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=84439"><img src="img/banner/banner_20190729_itq_2020.jpg" alt="���������� ��ź�� 2020 �̱��� ITQ" /></a></li>
+								<li class="rollingli"><a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=71032"><img src="img/banner/banner_20180604.jpg" alt="CBT �¶��� ���ǰ��� ������ ����" /></a></li>
+								<li class="rollingli"><a href="https://bit.ly/2meGt0m"><img src="img/banner/banner_20180712.png" alt="�հ��� ����! 2019 �̱��� �̿�� �ø��� �ȳ�" /></a></li>
+								<li class="rollingli"><a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=84612"><img src="img/banner/banner_20190807_ea.jpg" alt="2020 �̱��� ����ȸ�� �ø��� �ȳ�" /></a></li>
+							</ul>
+							<ul class="rollList">
+								<li><a href="#"><img src="img/ico_roll_on.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+								<li><a href="#"><img src="img/ico_roll_off.png" alt="" /></a></li>
+							</ul>
+						</div>
+						
+					</div>
+				</div>
+				<!-- //��� ���� �� -->
+				<div class="post"  id="notices">
+					<div class="notice" id="notic">
+						<h2><img src="img/h2_notice.gif" alt="��������" /></h2>
+						<ul id="notice-list" class="postList">
+														
+
+							<li>
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=90074">[��÷�ڹ�ǥ] 12�� 365 �����̺�Ʈ ����</a><span>2020-01-03</span>
+							</li>
+														
+
+							<li>
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=90061">[��÷�� ��ǥ] 365�� ����ǥ �̺�Ʈ ��÷..</a><span>2020-01-03</span>
+							</li>
+														
+
+							<li>
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=89889">[��������] 2020�� 1�� ��������(�������)</a><span>2019-12-26</span>
+							</li>
+														
+
+							<li>
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=notice&intSeq=87498">[��÷�ڹ�ǥ] 11�� 365 �����̺�Ʈ ����</a><span>2019-12-11</span>
+							</li>
+							
+						</ul>
+						<p class="more"><a href="/artyboard/Mboard.asp?strBoardID=notice"><img src="img/btn_more.gif" alt="�� ����" /></a></p>
+					</div>
+
+
+
+					<div class="epilogue">
+						<h2><img src="img/h2_epilogue.gif" alt="�̺�Ʈ" /></h2>
+						<ul class="postList">
+														
+
+							<li>
+
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=event&intSeq=87411">[����] 2020 �̱��� �ѱ���ɷ°������� ..</a><span>2019-12-10</span>
+							</li>
+														
+
+							<li>
+
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=event&intSeq=87192">[����] ����� ����������Ʈ! 12�� �̱���..</a><span>2019-11-29</span>
+							</li>
+														
+
+							<li>
+
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=event&intSeq=87050">[����] 4�Ͽϼ�! �̱����� �Բ��ϴ� ����..</a><span>2019-11-27</span>
+							</li>
+														
+
+							<li>
+
+							<a href="/artyboard/Mboard.asp?Action=view&strBoardID=event&intSeq=87012">[�̺�Ʈ] ����ǥ �����ϰ� ������ 2���� ..</a><span>2019-11-18</span>
+							</li>
+														
+						</ul>
+						<p class="more"><a href="/artyboard/Mboard.asp?strBoardID=event"><img src="img/btn_more.gif" alt="�� ����" /></a></p>
+
+
+					</div> 
+					
+					<div class="youtube_main">
+						<iframe id="player" type="text/html"  width="300" height="200" src="https://www.youtube.com/embed/XFKntBoFLVw?showinfo=0&controls=0&autoplay=0&allowfullscreen=1&loop=1&playlist=XFKntBoFLVw" frameborder="0"></iframe>
+					</div>
+					
+					
+					<div class="dday" style="display: none;">
+						<h2 id="dday_title">GTQ 2�� ���伥</h2>
+						<p><img src="img/txt_dday.gif" alt="D-day" /></p>
+						<p id="dday_counter" class="date">
+							<span class="no01"><img src="img/no0.gif" alt="0" /></span>
+							<span class="no02"><img src="img/no9.gif" alt="1" /></span>
+							<span class="no03"><img src="img/no0.gif" alt="0" /></span>
+						</p>
+						<p id="dday_url" class="accept"></p>
+						<div>
+							<a href="#nolink" class="prev" onclick="dday_counter_prev()"><img src="img/btn_prev.gif" alt="����" /></a>
+							<a href="#nolink" class="next" onclick="dday_counter_next()"><img src="img/btn_next.gif" alt="����" /></a>
+						</div>
+					</div>
+					
+				</div>
+				<div class="newBook">
+					<h2><img src="img/h2_newbook.gif" alt="�Ű�����" /></h2>
+					<ul class="tabBook">
+						<li><a href="#" class="on">�⺻��</a></li>
+						<li><a href="#">�ֽ� ������</a></li>
+						<li><a href="#">���⹮����</a></li>
+						<li class="end"><a href="#">��������</a></li>
+					</ul>
+					<!-- �� ����1 ���� -->
+					<div id="bookList01" class="bookList">
+						<a class="prev" href="#"><img src="img/btn_prev_off.png" alt="����" /></a>
+
+						<div>
+							<ul>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460513.png" alt="" />
+										2020 �̱��� �������ȱ�� �ʱ�+�Ǳ� ȯ�����޺�
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931461558.png" alt="" />
+										2020 �̱��� ����ó�������� �Ǳ� �⺻��
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460933.png" alt="" />
+										2020 �̱��� ��ǻ�ͱ׷��Ƚ� ����ɻ� �ʱ� �⺻��
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460414.jpg" alt="" />
+										2020 �̱��� ����������ɻ� �ʱ�
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460391.jpg" alt="" />
+										2020 �̱��� ����������ɻ� �ʱ� �⺻��
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931461282.png" alt="" />
+										SW�ڵ��ڰ� 2�� ��Ʈ��(2020)
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460612.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� �⺻��
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460483.jpg" alt="" />
+										2020 �̱��� ����ó�������� �ʱ� �⺻��
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931459432.jpg" alt="" />
+										�̱��� DRONE(���) ���θ�Ƽ���� �ʱ�
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460537.jpg" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 1�� �Ǳ� �⺻��
+									
+									
+								</li>
+
+							
+								<!--
+								<li>
+									<a href="#">
+										<img src="img/img_book01.gif" alt="" />
+										ȯ���� �޺�<br />
+										����&amp;�Ŀ�����Ʈ2013
+									</a>
+									<span>������:2014-04-02</span>
+								</li>
+								<li>
+									<a href="#">
+										<img src="img/img_book02.gif" alt="" />
+										�̱���<br />
+										��ǻ��Ȱ��ɷ�
+									</a>
+									<span>������:2014-04-02</span>
+								</li>
+								<li>
+									<a href="#">
+										<img src="img/img_book03.gif" alt="" />
+										�̱���<br />
+										�������μ���
+									</a>
+									<span>������:2014-04-02</span>
+								</li>
+								<li>
+									<a href="#">
+										<img src="img/img_book04.gif" alt="" />
+										�̱���<br />
+										itQ
+									</a>
+									<span>������:2014-04-02</span>
+								</li>
+								<li>
+									<a href="#">
+										<img src="img/img_book05.gif" alt="" />
+										�̱���<br />
+										�������μ���
+									</a>
+									<span>������:2014-04-02</span>
+								</li>
+								<li>
+									<a href="#">
+										<img src="img/img_book05.gif" alt="" />
+										�̱���<br />
+										�������μ���
+									</a>
+									<span>������:2014-04-02</span>
+								</li>--!>
+							</ul>
+						</div>
+
+						<a class="next" href="#"><img src="img/btn_next_off.png" alt="����" /></a>
+					</div>
+					<!-- �� ����1 �� -->
+
+					<!-- �� ����2 ���� -->
+					<div id="bookList02" class="bookList" style="display:none;">
+						<a class="prev" href="#"><img src="img/btn_prev_off.png" alt="����" /></a>
+						<div>
+							<ul>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460445.jpg" alt="" />
+										2020 �̱��� ����ó����ɻ� �ʱ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460599.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� �ֽ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460582.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 1�� �ʱ� �ֽ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460698.png" alt="" />
+										2020 �̱��� �������μ��� �ʱ� �ֽ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457452.jpg" alt="" />
+										2019 �̱��� ������ɻ� �ʱ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457292.JPG" alt="" />
+										2019 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457285.jpg" alt="" />
+										2019 �̱��� ��ǻ��Ȱ��ɷ� 1�� �ʱ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457858.jpg" alt="" />
+										2019 �̱��� ����ó����ɻ� �ʱ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457391.png" alt="" />
+										2019 �̱��� �������μ��� �ʱ� ������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931455922.png" alt="" />
+										2018�� �̱��� in ������ɻ� �ʱ� ������
+									
+									
+								</li>
+
+							</ul>
+						</div>
+						<a class="next" href="#"><img src="img/btn_next_off.png" alt="����" /></a>
+					</div>
+					<!-- �� ����2 �� -->
+
+					<!-- �� ����3 ���� -->
+					<div id="bookList03" class="bookList" style="display:none;">
+						<a class="prev" href="#"><img src="img/btn_prev_off.png" alt="����" /></a>
+						<div>
+							<ul>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460544.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 1�� �Ǳ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460452.png" alt="" />
+										2020 �̱��� ����ó����ɻ� �ʱ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460568.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 2�� �Ǳ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460636.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460629.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 1�� �ʱ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457476.png" alt="" />
+										2019 �̱��� ������ɻ� ȯ���� �޺�(�ʱ�+�ѽ� �Ǳ�)
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457469.jpg" alt="" />
+										2019 �̱��� ������ɻ� �ʱ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457759.jpg" alt="" />
+										2019 �̱��� �������� 1,2��
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457339.jpg" alt="" />
+										2019 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� ���⹮����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457322.jpg" alt="" />
+										2019 �̱��� ��ǻ��Ȱ��ɷ� 1�� �ʱ� ���⹮����
+									
+									
+								</li>
+
+
+							</ul>
+						</div>
+						<a class="next" href="#"><img src="img/btn_next_off.png" alt="����" /></a>
+					</div>
+					<!-- �� ����3 �� -->
+
+					<!-- �� ����4 ���� -->
+					<div id="bookList04" class="bookList" style="display:none;">
+						<a class="prev" href="#"><img src="img/btn_prev_off.png" alt="����" /></a>
+						<div>
+							<ul>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931461589.png" alt="" />
+										2020 �̱��� �������α�ɻ� �ʱ� ��������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460650.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� ��������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460643.png" alt="" />
+										2020 �̱��� ��ǻ��Ȱ��ɷ� 1�� �ʱ� ��������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460902.jpg" alt="" />
+										2020 �̱��� �繫�ڵ�ȭ������ �ʱ� ��������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931460940.jpg" alt="" />
+										2020 �̱��� ��ǻ�ͱ׷��Ƚ�����ɻ� �ʱ� ��������
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457896.jpg" alt="" />
+										2019 �̱��� ����ó����� �ʱ� �̴�����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457353.jpg" alt="" />
+										2019 �̱��� ��ǻ��Ȱ��ɷ� 2�� �ʱ� �̴�����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457346.jpg" alt="" />
+										2019 �̱��� ��ǻ��Ȱ��ɷ� 1�� �ʱ� �̴�����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457377.jpg" alt="" />
+										2019 �̱��� �������α�ɻ� �ʱ� �̴�����
+									
+									
+								</li>
+
+								<li>
+									
+										<img src="https://www.youngjin.com/images/book_cover/9788931457650.jpg" alt="" />
+										2019 �̱��� �繫�ڵ�ȭ������ �ʱ� �̴�����
+									
+									
+								</li>
+
+
+							</ul>
+						</div>
+						<a class="next" href="#"><img src="img/btn_next_off.png" alt="����" /></a>
+					</div>
+					<!-- �� ����4 �� -->
+				</div>
+				
+				<div class="sns_icon">
+					<img src="/img/sns/license_sns_icon.png" usemap="#imgmap201988105159" />
+					<map id="imgmap201988105159" name="imgmap201988105159">
+					<area shape="rect" alt="" title="" coords="1,1,58,60" href="https://cafe.naver.com/yjbooks" target="_blank" />
+					<area shape="rect" alt="" title="" coords="59,1,117,60" href="https://blog.naver.com/ydot" target="_blank" />
+					<area shape="rect" alt="" title="" coords="118,1,176,60" href="https://www.instagram.com/youngjin.com_official/" target="_blank" />
+					<area shape="rect" alt="" title="" coords="177,1,235,60" href="https://www.facebook.com/gijeogi/" target="_blank" />
+					<area shape="rect" alt="" title="" coords="236,1,294,60" href="https://www.youtube.com/user/ydot0789" target="_blank" />
+					</map>
+				</div>
+			</div>
+			<!-- //������ �� -->
+			
+		</div>
+		
+			<div id="footer">
+				<div class="footer">
+					<h1><a href="https://www.youngjin.com/"><img src="https://www.youngjin.com/tpl/images/common/logo_footer.gif" alt="YoungJin.com ��������" /></a></h1>
+					<ul class="siteInfo">
+						<li><a href="https://www.youngjin.com/company/intro/vision.asp" target="_blank">ȸ��Ұ�</a></li>
+						<li><a href="https://www.youngjin.com/member/agreement.asp" target="_blank">�̿���</a></li>
+						<li><a href="https://www.youngjin.com/member/personal.asp" target="_blank">����������޹�ħ</a></li>
+	
+					</ul>
+					<address>
+						<p>����Ư���� ��õ�� ���굿 ���������2�� 123 (����޸����2��) 1016ȣ �������� (��)08505 <span class="tel">TEL 1588-0789</span>FAX 02-8671987<br />
+						��ǥ�̻� ����  ����ڵ�Ϲ�ȣ 120-87-14492  ����ǸŽŰ� ��06555ȣ
+						<span class="copy">COPYRIGHT (c) 2016 YOGNJIN.COM. ALL RIGHT RESERVED.</span></p>
+					</address>
+				</div>
+			</div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-15296137-4', 'auto');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+
+</script>
+	</body>
+</html>
